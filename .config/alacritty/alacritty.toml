@@ -1,0 +1,27 @@
+import = [
+    "/home/pimeson/.config/alacritty/alacritty-theme/themes/gruvbox_dark.toml"
+]
+
+[font]
+size = 11.0
+
+[font.normal]
+family = "MesloLGS NF"
+style = "Regular"
+
+[keyboard]
+bindings = [
+    { key="C", mods="Command", action="Copy" },
+    { key="V", mods="Command", action="Paste" }
+]
+
+[window]
+padding = {x=5, y=5}
+dynamic_padding = true
+
+[selection]
+save_to_clipboard = true
+
+[cursor]
+style = { shape="Block", blinking="Always" }
+
