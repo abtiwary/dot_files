@@ -4,12 +4,14 @@
 -- Highlight, edit, and navigate code
 return {
   'nvim-treesitter/nvim-treesitter',
+  --branch = "main",
+  branch = "master",
   build = ':TSUpdate',
   dependencies = {
     'nvim-treesitter/nvim-treesitter-textobjects',
   },
   config = function()
-    require('nvim-treesitter.configs').setup {
+    require('nvim-treesitter').setup {
       -- Add languages to be installed here that you want installed for treesitter
       ensure_installed = {
         'lua',
@@ -104,6 +106,6 @@ return {
     vim.filetype.add { extension = { tfvars = 'terraform' } }
     vim.filetype.add { extension = { pipeline = 'groovy' } }
     vim.filetype.add { extension = { multibranch = 'groovy' } }
-  end,
+  end
 }
 

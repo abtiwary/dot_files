@@ -3,18 +3,40 @@ return {
   'neovim/nvim-lspconfig',
   dependencies = {
     -- Automatically install LSPs and related tools to stdpath for Neovim
-    { 'mason-org/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+    --{ 'mason-org/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+    {
+      "mason-org/mason.nvim",
+      opts = {
+        ensure_installed = {
+          "lua_ls"
+        },
+        ui = {
+            icons = {
+                package_installed = "✓",
+                package_pending = "➜",
+                package_uninstalled = "✗"
+            }
+        }
+      }
+    },
     -- mason-lspconfig:
     -- - Bridges the gap between LSP config names (e.g. "lua_ls") and actual Mason package names (e.g. "lua-language-server").
     -- - Used here only to allow specifying language servers by their LSP name (like "lua_ls") in `ensure_installed`.
     -- - It does not auto-configure servers — we use vim.lsp.config() + vim.lsp.enable() explicitly for full control.
-    'mason-org/mason-lspconfig.nvim',
+    --'mason-org/mason-lspconfig.nvim',
+    {
+      "mason-org/mason-lspconfig.nvim",
+      opts = {},
+      dependencies = {
+        { "mason-org/mason.nvim", opts = {} },
+          "neovim/nvim-lspconfig",
+      },
+    }, 
     -- mason-tool-installer:
     -- - Installs LSPs, linters, formatters, etc. by their Mason package name.
     -- - We use it to ensure all desired tools are present.
     -- - The `ensure_installed` list works with mason-lspconfig to resolve LSP names like "lua_ls".
     'WhoIsSethDaniel/mason-tool-installer.nvim',
-
     -- Useful status updates for LSP.
     {
       'j-hui/fidget.nvim',
@@ -142,43 +164,49 @@ return {
     local servers = {
       rust_analyzer = {
         settings = {
-			["rust-analyzer"] = {
-			    cargo = {
-					features = "all",
-				},
-				checkOnSave = {
-					enable = true,
-				},
-				check = {
-					command = "clippy",
-				},
-				imports = {
-					group = {
-						enable = false,
-					},
-				},
-				completion = {
-					postfix = {
-						enable = false,
-					},
-				},
-			},
+	  ["rust-analyzer"] = {
+	    cargo = {
+	      features = "all",
+	    },
+            diagnostics = {
+              enable = true,
+            },
+	    checkOnSave = {
+	      enable = true,
+	    },
+	    check = {
+	      command = "clippy",
+	    },
+	    imports = {
+	      group = {
+	        enable = false,
+	      },
+	    },
+	    completion = {
+	      postfix = {
+	        enable = false,
 		},
+	      },
+	    },
+	  },
       },
       lua_ls = {
         settings = {
           Lua = {
-            completion = {
-              callSnippet = 'Replace',
-            },
+            --completion = {
+            --  callSnippet = 'Replace',
+            --},
             runtime = { version = 'LuaJIT' },
             workspace = {
               checkThirdParty = false,
-              library = vim.api.nvim_get_runtime_file('', true),
+              library = {
+                --vim.api.nvim_get_runtime_file('', true),
+                vim.env.VIMRUNTIME,
+              },
             },
             diagnostics = {
-              globals = { 'vim' },
-              disable = { 'missing-fields' },
+              globals = { 'vim', 'require' },
+              --disable = { 'missing-fields' },
             },
             format = {
               enable = false,
@@ -226,7 +254,9 @@ return {
       bashls = {},
       dockerls = {},
       --ccls = {},
-      clangd = {},
+      clangd = {
+        "--extra-arg=-std=c++23"
+      },
       docker_compose_language_service = {},
       -- tailwindcss = {},
       -- graphql = {},
@@ -234,6 +264,14 @@ return {
       -- cssls = {},
       -- ltex = {},
       -- texlab = {},
+      gopls = {
+        settings = {
+          gopls = {
+            analyses = { unusedparams = true },
+            staticcheck = true,
+          }
+        }
+      },
     }
 
     -- Ensure the servers and tools above are installed
